@@ -1,0 +1,44 @@
+.divChatMessage {
+    display: flex;
+    border-radius: 0.75rem;
+    width: 100%;
+}
+
+.divText {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    margin-top: 0.25rem;
+    margin-bottom: 0.5rem;
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+    border-radius: 0.3rem;
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
+    padding-top: 0.15rem;
+    padding-bottom: 0.15rem;
+    color: #646464;
+    max-width: 75%;
+    font-size: 0.8rem;
+}
+
+.spanName{
+    color:#5797f5;
+    font-weight: bold;
+}
+
+.divMessageTime{
+    color: #8d8d8d !important;
+    font-size: 0.6rem;
+    justify-content: flex-end;
+    width: 100%;
+    display: flex;
+    align-items:center;
+    margin-left: 0.25rem;
+}
+
+.iconTime{
+    margin-bottom: 0.12rem;
+    margin-left: 0.15rem;
+    margin-right: 0.15rem;
+}
