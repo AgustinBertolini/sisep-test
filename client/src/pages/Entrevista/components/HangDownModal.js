@@ -3,11 +3,33 @@ import {Button, Modal, ModalBody, ModalFooter, Row} from "reactstrap";
 import {Rating, Typography} from "@mui/material";
 import {SocketContext} from "../../../SocketContext";
 
-const HangDownModal = ({open, setOpen}) => {
+const HangDownModal = ({open, setOpen,guidOdoo}) => {
   const {leaveCall} = useContext(SocketContext);
   const [ratingValue, setRatingValue] = useState(0);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    const settings = {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        SoeToken: "Cwf8tVGv674@",
+      },
+      body: JSON.stringify({
+        status: "in progress",
+        observations: "",
+        result_attachment: "",
+        score: "1",
+      }),
+    };
+    //draft:es para informar algo
+    //in progress:es para indicar que la esntrevista esta en curso
+    //done:es para indicar que la entrevista termino
+    //error:es para informar que hubo un error
+    await fetch(
+      `https://sisep.ovh001.eynes.com.ar/sisep/soe/interview/${guidOdoo}`,
+      settings
+    );
     leaveCall();
   };
 

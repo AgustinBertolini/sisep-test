@@ -4,17 +4,19 @@ import Peer from "simple-peer";
 
 const SocketContext = createContext();
 
-const socket = io("https://sisep-video-chat-app.herokuapp.com/");
-
 const ContextProvider = ({children}) => {
+  const params = new URLSearchParams(window.location.search);
+  const guid = params.get("guid");
+  const socket = io(`https://sisep-video-chat-app.herokuapp.com`);
   const [stream, setStream] = useState(null);
-  const [me, setMe] = useState("");
+  const [me, setMe] = useState({});
   const [call, setCall] = useState({});
   const [callAccepted, setCallAccepted] = useState(false);
   const [callEnded, setCallEnded] = useState(false);
   const [name, setName] = useState("");
   const [interviewedName, setInterviewedName] = useState("");
-  const [textAreaCodeId, setTextAreaCodeState] = useState("");
+  const [textAreaCodeId, setTextAreaCodeId] = useState("");
+  const [socketUsers, setSocketUsers] = useState([]);
 
   const myVideo = useRef();
   const userVideo = useRef();
@@ -29,6 +31,8 @@ const ContextProvider = ({children}) => {
       });
 
     socket.on("me", id => setMe(id));
+
+    socket.on("users", users => setSocketUsers(users));
 
     socket.on("calluser", ({from, name: callerName, signal}) => {
       setCall({isReceivingCall: true, from, name: callerName, signal});
@@ -56,15 +60,15 @@ const ContextProvider = ({children}) => {
     connectionRef.current = peer;
   };
 
-  const callUser = (id, callingName) => {
+  const callUser = callingName => {
     const peer = new Peer({initiator: true, trickle: false, stream});
 
     peer.on("signal", data => {
       socket.emit("calluser", {
-        userToCall: id,
+        userToCall: "",
         signalData: data,
         from: me,
-        name: callingName,
+        name,
       });
     });
 
@@ -108,7 +112,7 @@ const ContextProvider = ({children}) => {
         leaveCall,
         answercall,
         textAreaCodeId,
-        setTextAreaCodeState,
+        setTextAreaCodeId,
       }}
     >
       {children}
