@@ -4,7 +4,14 @@ import {SocketContext} from "../../../SocketContext";
 import HangDownModal from "./HangDownModal";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
-const VideoPlayer = ({isCodeInterview, isInterviewer, showInitialModal, guidOdoo}) => {
+const VideoPlayer = ({
+  isCodeInterview,
+  isInterviewer,
+  showInitialModal,
+  guidOdoo,
+  interviewerName,
+  interviewedName,
+}) => {
   const {
     name,
     callAccepted,
@@ -27,22 +34,19 @@ const VideoPlayer = ({isCodeInterview, isInterviewer, showInitialModal, guidOdoo
         SoeToken: "Cwf8tVGv674@",
       },
       body: JSON.stringify({
-        status: "in progress",
-        observations: "",
+        status: "in_progress",
+        observations: "Comenzo la entrevista",
         result_attachment: "",
-        score: "1",
+        score: "0",
       }),
     };
-    //draft:es para informar algo
-    //in progress:es para indicar que la esntrevista esta en curso
+    //in_progress:es para indicar que la esntrevista esta en curso
     //done:es para indicar que la entrevista termino
     //error:es para informar que hubo un error
     const response = await fetch(
       `https://sisep.ovh001.eynes.com.ar/sisep/soe/interview/${guidOdoo}`,
       settings
     );
-
-    console.log("response", response.json());
   };
 
   return (
@@ -53,6 +57,8 @@ const VideoPlayer = ({isCodeInterview, isInterviewer, showInitialModal, guidOdoo
             style={{
               paddingLeft: "3%",
               paddingTop: isCodeInterview ? "0%" : "5%",
+              height: isCodeInterview ? "300px" : "",
+              zIndex: 9999,
             }}
           >
             <Col
@@ -63,6 +69,7 @@ const VideoPlayer = ({isCodeInterview, isInterviewer, showInitialModal, guidOdoo
                 textAlign: "center",
                 paddingLeft: "0px",
                 paddingRight: "2px",
+                marginBottom: isCodeInterview ? "" : "6%",
               }}
             >
               <video
@@ -72,23 +79,25 @@ const VideoPlayer = ({isCodeInterview, isInterviewer, showInitialModal, guidOdoo
                 muted
                 ref={myVideo}
                 autoPlay
-                style={{borderRadius: "1%", transition: "1000ms"}}
+                style={{borderRadius: "1%"}}
               />
-              <span style={{fontWeight: "bold", color: "#4a4a4a"}}>{name}</span>
+              <span style={{fontWeight: "bold", color: "#4a4a4a"}}>
+                {isInterviewer ? interviewerName : interviewedName}
+              </span>
             </Col>
             {call.isReceivingCall && !callAccepted && isInterviewer ? (
               <Col sm={6}>
                 <div
                   style={{
                     display: "flex",
-                    marginTop: "40%",
+                    marginTop: "20%",
                     alignItems: "center",
                     flexDirection: "column",
                     transition: "500ms",
                   }}
                 >
                   <h3 style={{color: "#4a4a4a", textAlign: "center"}}>
-                    {call.name} ha solicitado entrar a la llamada
+                    {interviewedName} ha solicitado entrar a la llamada
                   </h3>
                   <Button
                     style={{width: "25%"}}
@@ -105,7 +114,7 @@ const VideoPlayer = ({isCodeInterview, isInterviewer, showInitialModal, guidOdoo
                   <div
                     style={{
                       display: "flex",
-                      marginTop: "40%",
+                      marginTop: "20%",
                       alignItems: "center",
                       flexDirection: "column",
                       transition: "500ms",
@@ -145,31 +154,45 @@ const VideoPlayer = ({isCodeInterview, isInterviewer, showInitialModal, guidOdoo
                     muted
                     ref={userVideo}
                     autoPlay
-                    style={{borderRadius: "1%", transition: "1000ms"}}
+                    style={{
+                      borderRadius: "1%",
+                      marginBottom: isCodeInterview ? "" : "4%",
+                    }}
                   />
                   <span style={{fontWeight: "bold", color: "#4a4a4a"}}>
-                    {isInterviewer ? "Candidato" : "Entrevistador"}
+                    {isInterviewer ? interviewedName : interviewerName}
                   </span>
+                  <Button
+                    color="danger"
+                    onClick={() => {
+                      isInterviewer
+                        ? setShowHangDownModal(!showHangDownModal)
+                        : window.location.reload();
+                    }}
+                    style={{width: "10%"}}
+                  >
+                    <FontAwesomeIcon
+                      style={{transform: "rotate(90deg)"}}
+                      icon="fa-solid fa-phone-slash"
+                      size="sm"
+                    />
+                  </Button>
                 </Col>
               </>
             )}
-            <Row
-              style={{marginRight: "0px", paddingLeft: "1%", justifyContent: "center"}}
-            >
-              {callAccepted && !callEnded && isInterviewer && (
-                <Button
-                  color="danger"
-                  onClick={() => setShowHangDownModal(!showHangDownModal)}
-                  style={{width: "5%"}}
-                >
-                  <FontAwesomeIcon
-                    style={{transform: "rotate(90deg)"}}
-                    icon="fa-solid fa-phone-slash"
-                    size="sm"
-                  />
-                </Button>
-              )}
-            </Row>
+            {callEnded && (
+              <Col
+                md={6}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "50%",
+                }}
+              >
+                <h4>La llamada ha terminado.</h4>
+              </Col>
+            )}
           </Row>
           <HangDownModal
             open={showHangDownModal}

@@ -7,7 +7,8 @@ const SocketContext = createContext();
 const ContextProvider = ({children}) => {
   const params = new URLSearchParams(window.location.search);
   const guid = params.get("guid");
-  const socket = io(`https://sisep-video-chat-app.herokuapp.com`);
+  // const socket = io(`https://sisep-video-chat-app.herokuapp.com`);
+  const socket = io(`http://localhost:5200`);
   const [stream, setStream] = useState(null);
   const [me, setMe] = useState({});
   const [call, setCall] = useState({});
@@ -76,6 +77,10 @@ const ContextProvider = ({children}) => {
       userVideo.current.srcObject = currentStream;
     });
 
+    socket.on("callended", () => {
+      setCallEnded(true);
+    });
+
     socket.on("callaccepted", signal => {
       setCallAccepted(true);
       setInterviewedName(name);
@@ -87,6 +92,8 @@ const ContextProvider = ({children}) => {
   };
 
   const leaveCall = () => {
+    socket.emit("callended");
+
     setCallEnded(true);
 
     connectionRef.current.destroy();

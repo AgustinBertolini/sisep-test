@@ -1,6 +1,15 @@
 import {Typography} from "@mui/material";
 import React, {useContext, useState} from "react";
-import {Button, Col, Input, Modal, ModalBody, ModalFooter, Row} from "reactstrap";
+import {
+  Button,
+  Col,
+  FormFeedback,
+  Input,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  Row,
+} from "reactstrap";
 import {SocketContext} from "../../../SocketContext";
 
 const InitialDataModal = ({
@@ -12,23 +21,29 @@ const InitialDataModal = ({
   setIsInterviewer,
   interviewData,
 }) => {
-  const params = new URLSearchParams(window.location.search);
-  const guid = params.get("guid");
   const {setName, callUser} = useContext(SocketContext);
   const [inputsValues, setInputsValues] = useState({
     name: "",
     guidInterview: "",
   });
+  const [validationWarning, setValidationWarning] = useState(false);
 
   const handleSubmit = () => {
     if (inputsValues.name === interviewData.mail_interviewer) {
       setName(inputsValues.name);
       setOpen(!open);
       setIsInterviewer(true);
-    } else {
+    }
+    if (inputsValues.name === interviewData.mail_interviewed) {
       setName(inputsValues.name);
       callUser(inputsValues.name);
       setOpen(!open);
+    }
+    if (
+      inputsValues.name !== interviewData.mail_interviewer &&
+      inputsValues.name !== interviewData.mail_interviewed
+    ) {
+      setValidationWarning(true);
     }
   };
 
@@ -42,6 +57,7 @@ const InitialDataModal = ({
               value={inputsValues.name}
               autoComplete="off"
               placeholder="Ingrese su email"
+              invalid={validationWarning}
               name="name"
               onChange={e => {
                 setInputsValues({
@@ -53,9 +69,16 @@ const InitialDataModal = ({
                 if (e.key === "Enter") handleSubmit();
               }}
             />
-            <Typography fontSize={"0.8rem"} htmlColor={"#fafafa"} sx={{opacity: "75%"}}>
-              Este campo es utilizado para validar su identidad
-            </Typography>
+            <FormFeedback style={{marginTop: "10px"}}>Email incorrecto</FormFeedback>
+            {!validationWarning && (
+              <Typography
+                fontSize={"0.8rem"}
+                htmlColor={"#fafafa"}
+                sx={{opacity: "75%", marginTop: "10px"}}
+              >
+                Este campo es utilizado para validar su identidad
+              </Typography>
+            )}
           </Col>
         </Row>
       </ModalBody>

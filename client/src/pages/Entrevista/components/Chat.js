@@ -8,24 +8,28 @@ import {InputMessage} from "./styles/InputMessage";
 import {SendIcon} from "./styles/SendIcon";
 import {firestore} from "../../../helpers/firebase";
 import {Timestamp} from "@firebase/firestore";
-import {SocketContext} from "../../../SocketContext";
 
 library.add(faCircleChevronRight);
 
-const Chat = ({isInterviewer}) => {
-  const {name} = useContext(SocketContext);
+const Chat = ({
+  isInterviewer,
+  isCodeInterview,
+  guidOdoo,
+  interviewerName,
+  interviewedName,
+}) => {
   const [conversationState, setConversationState] = useState([]);
   const [messageState, setMessageState] = useState("");
 
   const handleSubmitMessage = async () => {
     if (messageState !== "") {
       await firestore.collection("conversations").add({
-        guid: "ASDGSFG1231",
+        guid: guidOdoo,
         message: messageState,
         date: Timestamp.fromDate(new Date()),
         timestamp: Timestamp.toString(),
         isEntrevistador: isInterviewer,
-        name: name,
+        name: isInterviewer ? interviewerName : interviewedName,
       });
 
       setMessageState("");
@@ -36,6 +40,7 @@ const Chat = ({isInterviewer}) => {
     await firestore.collection("conversations").onSnapshot(res =>
       setConversationState(
         res.docs
+          .filter(doc => doc.data().guid === guidOdoo)
           .sort((a, b) => b.data().date.seconds - a.data().date.seconds)
           .map(doc => {
             const data = doc.data();
@@ -60,7 +65,12 @@ const Chat = ({isInterviewer}) => {
   return (
     <>
       <div style={{borderLeft: "1px solid #cbcbcb"}}>
-        <DivChat>
+        <DivChat
+          style={{
+            height: isCodeInterview ? "87vh" : "95vh",
+            maxHeight: isCodeInterview ? "87vh" : "95vh",
+          }}
+        >
           {conversationState &&
             conversationState.length > 0 &&
             conversationState.map(conversation => {
@@ -71,6 +81,7 @@ const Chat = ({isInterviewer}) => {
                   emisor={conversation.isEntrevistador}
                   messageName={conversation.name}
                   date={conversation.date}
+                  name={isInterviewer ? interviewerName : interviewedName}
                 />
               );
             })}

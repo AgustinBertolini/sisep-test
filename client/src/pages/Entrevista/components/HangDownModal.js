@@ -1,11 +1,12 @@
 import React, {useContext, useState} from "react";
-import {Button, Modal, ModalBody, ModalFooter, Row} from "reactstrap";
-import {Rating, Typography} from "@mui/material";
+import {Button, Modal, ModalBody, ModalFooter, ModalHeader, Row} from "reactstrap";
+import {Rating, TextareaAutosize, Typography} from "@mui/material";
 import {SocketContext} from "../../../SocketContext";
 
-const HangDownModal = ({open, setOpen,guidOdoo}) => {
+const HangDownModal = ({open, setOpen, guidOdoo}) => {
   const {leaveCall} = useContext(SocketContext);
   const [ratingValue, setRatingValue] = useState(0);
+  const [observaciones, setObservaciones] = useState("");
 
   const handleSubmit = async () => {
     const settings = {
@@ -16,14 +17,13 @@ const HangDownModal = ({open, setOpen,guidOdoo}) => {
         SoeToken: "Cwf8tVGv674@",
       },
       body: JSON.stringify({
-        status: "in progress",
-        observations: "",
+        status: "done",
+        observations: observaciones,
         result_attachment: "",
-        score: "1",
+        score: ratingValue >= 0 && ratingValue <= 5 ? ratingValue.toString() : "0",
       }),
     };
-    //draft:es para informar algo
-    //in progress:es para indicar que la esntrevista esta en curso
+    //in_progress:es para indicar que la esntrevista esta en curso
     //done:es para indicar que la entrevista termino
     //error:es para informar que hubo un error
     await fetch(
@@ -34,12 +34,14 @@ const HangDownModal = ({open, setOpen,guidOdoo}) => {
   };
 
   return (
-    <Modal isOpen={open} style={{paddingTop: "10%", width: "20%"}}>
+    <Modal isOpen={open} style={{paddingTop: "10%"}}>
+      <ModalHeader>
+        <Typography fontSize="0.8rem" fontWeight="bold">
+          Puntue la entrevista
+        </Typography>
+      </ModalHeader>
       <ModalBody>
         <Row>
-          <Typography component="legend" fontSize="0.8rem" fontWeight="bold">
-            Puntue la entrevista
-          </Typography>
           <Rating
             name="simple-controlled"
             value={ratingValue}
@@ -49,6 +51,18 @@ const HangDownModal = ({open, setOpen,guidOdoo}) => {
             defaultValue={1}
             size="large"
             sx={{".MuiSvgIcon-root": {fill: "yellow"}}}
+          />
+          <Typography fontSize="0.7rem">
+            Indique el desempeño del candidato en una escala del 1 al 5 donde 1 es muy
+            mala y 5 muy buena.
+          </Typography>
+        </Row>
+        <Row style={{marginTop: "1%"}}>
+          <TextareaAutosize
+            aria-label="empty textarea"
+            placeholder="Observaciones"
+            onChange={event => setObservaciones(event.target.value)}
+            style={{width: "100%", height: "200px", borderColor: "lightgray"}}
           />
         </Row>
       </ModalBody>

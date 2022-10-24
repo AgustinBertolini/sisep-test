@@ -6,17 +6,17 @@ import VideoPlayer from "./components/VideoPlayer";
 import InitialDataModal from "./components/InitialDataModal";
 import {library} from "@fortawesome/fontawesome-svg-core";
 import {faPhoneSlash} from "@fortawesome/free-solid-svg-icons";
-import {SocketContext} from "../../SocketContext";
 library.add(faPhoneSlash);
 
 const Entrevista = () => {
-  const {name} = useContext(SocketContext);
   const params = new URLSearchParams(window.location.search);
   const guidOdoo = params.get("guid");
   const [showInitialModal, setShowInitialModal] = useState(true);
   const [isCodeInterview, setIsCodeInterview] = useState(false);
   const [isInterviewer, setIsInterviewer] = useState(false);
   const [interviewData, setInterviewData] = useState(null);
+  const [interviewerName, setInterviewerName] = useState("");
+  const [interviewedName, setInterviewedName] = useState("");
 
   const fetchData = async () => {
     const settings = {
@@ -35,6 +35,8 @@ const Entrevista = () => {
     const data = await response.json();
     setIsCodeInterview(data.result.is_code);
     setInterviewData(data.result);
+    setInterviewerName(data.result.application_data[0].create_uid[1]);
+    setInterviewedName(data.result.application_data[0].partner_name);
 
     console.log("get odoo", data);
   };
@@ -80,7 +82,7 @@ const Entrevista = () => {
           position: "sticky",
           top: "8%",
           backgroundColor: "white",
-          zIndex: 99,
+          zIndex: 9999,
         }}
       >
         <Col sm={9}>
@@ -89,10 +91,18 @@ const Entrevista = () => {
             isCodeInterview={isCodeInterview}
             showInitialModal={showInitialModal}
             guidOdoo={guidOdoo}
+            interviewerName={interviewerName}
+            interviewedName={interviewedName}
           />
         </Col>
         <Col sm={3} style={{position: "fixed", right: "-1%"}}>
-          <Chat isInterviewer={isInterviewer} />
+          <Chat
+            isInterviewer={isInterviewer}
+            isCodeInterview={isCodeInterview}
+            guidOdoo={guidOdoo}
+            interviewerName={interviewerName}
+            interviewedName={interviewedName}
+          />
         </Col>
       </Row>
 
@@ -106,7 +116,7 @@ const Entrevista = () => {
           }}
         >
           <Col sm={{offset: 1, size: 7}}>
-            <TextAreaCode />
+            <TextAreaCode guidOdoo={guidOdoo} />
           </Col>
         </Row>
       )}

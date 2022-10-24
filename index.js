@@ -16,7 +16,9 @@ var usersArray = [];
 
 app.get("/", (req, res) => {
   res.send(
-    `Server is runnning. GUID: ${req.query.guid}. Users logged: ${JSON.stringify(usersArray)}`
+    `Server is runnning. GUID: ${req.query.guid}. Users logged: ${JSON.stringify(
+      usersArray
+    )}`
   );
 });
 
@@ -36,6 +38,10 @@ io.on("connection", (socket) => {
   socket.on("answercall", (data) => {
     // io.to(data.to).emit("callaccepted", data.signal);
     socket.broadcast.emit("callaccepted", data.signal);
+  });
+
+  socket.on("callended", () => {
+    socket.broadcast.emit("callended");
   });
 });
 

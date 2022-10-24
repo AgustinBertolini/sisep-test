@@ -4,55 +4,53 @@ import {Timestamp} from "@firebase/firestore";
 import {firestore} from "../../../helpers/firebase";
 import {SocketContext} from "../../../SocketContext";
 
-const TextAreaCode = () => {
-  const {textAreaCodeId,setTextAreaCodeId} = useContext(SocketContext);
-  const [codeState, setCodeState] = useState("");
+const TextAreaCode = ({guidOdoo}) => {
+  const {textAreaCodeId, setTextAreaCodeId} = useContext(SocketContext);
+  const [codeState, setCodeState] = useState("Ingrese su codigo aqui.");
 
   const handleSetCode = async () => {
-    if (textAreaCodeId.length > 0) {
-      await firestore
-        .collection("codes")
-        .doc(textAreaCodeId)
-        .set({
-          guid: "ASDGSFG1231",
-          code: codeState,
-          date: Timestamp.fromDate(new Date()),
-        });
-    } else {
-      await firestore
-        .collection("codes")
-        .add({
-          guid: "ASDGSFG1231",
-          code: codeState,
-          date: Timestamp.fromDate(new Date()),
-        })
-        .then(doc => setTextAreaCodeId(doc.id));
+    if (codeState !== "Ingrese su codigo aqui.") {
+      if (textAreaCodeId.length > 0) {
+        await firestore
+          .collection("codes")
+          .doc(textAreaCodeId)
+          .set({
+            guid: guidOdoo,
+            code: codeState,
+            date: Timestamp.fromDate(new Date()),
+          });
+      } else {
+        await firestore
+          .collection("codes")
+          .add({
+            guid: guidOdoo,
+            code: codeState,
+            date: Timestamp.fromDate(new Date()),
+          })
+          .then(doc => setTextAreaCodeId(doc.id));
+      }
     }
   };
 
   //TODO: Cuando se pueda reingresar a una entrevista esto va a traer el codigo
   const fetchData = async () => {
     await firestore.collection("codes").onSnapshot(res => {
-      const savedCode = res.docs.find(
-        doc => doc.data().guid === "ASDGSFG1231" && doc.data().code !== ""
-      );
+      const savedCode = res.docs.find(doc => doc.data().guid === guidOdoo && doc.data().code !== '');
+
       if (savedCode) {
+        setTextAreaCodeId(savedCode.id);
         setCodeState(savedCode.data().code);
       }
     });
   };
 
   useEffect(() => {
-    handleSetCode();
+    // handleSetCode();
     fetchData();
-    const interval = setInterval(() => {
-      handleSetCode();
-    }, 1500);
-    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
-    console.log(codeState);
+    handleSetCode();
   }, [codeState]);
 
   return (
@@ -60,16 +58,15 @@ const TextAreaCode = () => {
       <CodeEditor
         value={codeState}
         language="js"
-        placeholder="Please enter JS code."
-        onChange={evn => setCodeState(evn.target.value)}
-        // onKeyUp={e => e.key === "Enter" && setCodeState(`${codeState}`)}
+        onBlur={evn => setCodeState(evn.target.value)}
         padding={15}
         style={{
           fontSize: 12,
           border: "1px solid lightgray",
           backgroundColor: "#efefef",
-          marginBottom: "15%",
+          marginBottom: "25%",
           minHeight: "100%",
+          zIndex: 999,
           fontFamily:
             "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
         }}
