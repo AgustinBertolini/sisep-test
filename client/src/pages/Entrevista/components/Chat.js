@@ -8,6 +8,7 @@ import {InputMessage} from "./styles/InputMessage";
 import {SendIcon} from "./styles/SendIcon";
 import {firestore} from "../../../helpers/firebase";
 import {Timestamp} from "@firebase/firestore";
+import {SocketContext} from "../../../SocketContext";
 
 library.add(faCircleChevronRight);
 
@@ -18,6 +19,7 @@ const Chat = ({
   interviewerName,
   interviewedName,
 }) => {
+  const {callEnded, callAccepted} = useContext(SocketContext);
   const [conversationState, setConversationState] = useState([]);
   const [messageState, setMessageState] = useState("");
 
@@ -67,8 +69,8 @@ const Chat = ({
       <div style={{borderLeft: "1px solid #cbcbcb"}}>
         <DivChat
           style={{
-            height: isCodeInterview ? "87vh" : "95vh",
-            maxHeight: isCodeInterview ? "87vh" : "95vh",
+            height: isCodeInterview ? "89vh" : "95vh",
+            maxHeight: isCodeInterview ? "89vh" : "95vh",
           }}
         >
           {conversationState &&
@@ -92,6 +94,7 @@ const Chat = ({
             autoComplete="off"
             placeholder="Escriba un mensaje..."
             value={messageState}
+            disabled={callEnded || !callAccepted}
             onChange={e => setMessageState(e.target.value)}
             onKeyUp={e => {
               e.key === "Enter" && handleSubmitMessage();

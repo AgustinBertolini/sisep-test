@@ -10,7 +10,7 @@ const Layout = ({children}) => {
                     backgroundColor: "#275fb3",
                     position: "fixed",
                     width: "100%",
-                    zIndex: 99,
+                    zIndex: 99999,
                 }}
             >
                 <div className="container-fluid">

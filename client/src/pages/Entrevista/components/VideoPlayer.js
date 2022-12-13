@@ -57,8 +57,8 @@ const VideoPlayer = ({
             style={{
               paddingLeft: "3%",
               paddingTop: isCodeInterview ? "0%" : "5%",
-              height: isCodeInterview ? "300px" : "",
-              zIndex: 9999,
+              height: isCodeInterview ? "220px" : "",
+              zIndex: isCodeInterview ? 9999 : 999,
             }}
           >
             <Col
@@ -69,14 +69,14 @@ const VideoPlayer = ({
                 textAlign: "center",
                 paddingLeft: "0px",
                 paddingRight: "2px",
+                maxHeight: "150px",
                 marginBottom: isCodeInterview ? "" : "6%",
               }}
             >
               <video
                 width={"100%"}
-                height={isCodeInterview ? "40%" : "100%"}
+                height={isCodeInterview ? "100%" : "378px"}
                 playsInline
-                muted
                 ref={myVideo}
                 autoPlay
                 style={{borderRadius: "1%"}}
@@ -90,7 +90,7 @@ const VideoPlayer = ({
                 <div
                   style={{
                     display: "flex",
-                    marginTop: "20%",
+                    marginTop: "10%",
                     alignItems: "center",
                     flexDirection: "column",
                     transition: "500ms",
@@ -114,7 +114,7 @@ const VideoPlayer = ({
                   <div
                     style={{
                       display: "flex",
-                      marginTop: "20%",
+                      marginTop: "10%",
                       alignItems: "center",
                       flexDirection: "column",
                       transition: "500ms",
@@ -145,18 +145,17 @@ const VideoPlayer = ({
                     textAlign: "center",
                     paddingLeft: "2px",
                     paddingRight: "0px",
+                    maxHeight: "150px",
                   }}
                 >
                   <video
                     width={"100%"}
-                    height={isCodeInterview ? "40%" : "100%"}
+                    height={isCodeInterview ? "100%" : "378px"}
                     playsInline
-                    muted
                     ref={userVideo}
                     autoPlay
                     style={{
                       borderRadius: "1%",
-                      marginBottom: isCodeInterview ? "" : "4%",
                     }}
                   />
                   <span style={{fontWeight: "bold", color: "#4a4a4a"}}>

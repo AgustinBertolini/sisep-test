@@ -4,8 +4,8 @@ import {Timestamp} from "@firebase/firestore";
 import {firestore} from "../../../helpers/firebase";
 import {SocketContext} from "../../../SocketContext";
 
-const TextAreaCode = ({guidOdoo}) => {
-  const {textAreaCodeId, setTextAreaCodeId} = useContext(SocketContext);
+const TextAreaCode = ({guidOdoo,isInterviewer}) => {
+  const {textAreaCodeId, setTextAreaCodeId, callAccepted} = useContext(SocketContext);
   const [codeState, setCodeState] = useState("Ingrese su codigo aqui.");
 
   const handleSetCode = async () => {
@@ -32,7 +32,6 @@ const TextAreaCode = ({guidOdoo}) => {
     }
   };
 
-  //TODO: Cuando se pueda reingresar a una entrevista esto va a traer el codigo
   const fetchData = async () => {
     await firestore.collection("codes").onSnapshot(res => {
       const savedCode = res.docs.find(doc => doc.data().guid === guidOdoo && doc.data().code !== '');
@@ -45,7 +44,6 @@ const TextAreaCode = ({guidOdoo}) => {
   };
 
   useEffect(() => {
-    // handleSetCode();
     fetchData();
   }, []);
 
@@ -59,14 +57,15 @@ const TextAreaCode = ({guidOdoo}) => {
         value={codeState}
         language="js"
         onBlur={evn => setCodeState(evn.target.value)}
-        padding={15}
+        // padding={15}
+        disabled={isInterviewer && callAccepted}
         style={{
           fontSize: 12,
           border: "1px solid lightgray",
           backgroundColor: "#efefef",
           marginBottom: "25%",
           minHeight: "100%",
-          zIndex: 999,
+          zIndex: 500,
           fontFamily:
             "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
         }}

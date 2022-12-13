@@ -34,7 +34,7 @@ const HangDownModal = ({open, setOpen, guidOdoo}) => {
   };
 
   return (
-    <Modal isOpen={open} style={{paddingTop: "10%"}}>
+    <Modal isOpen={open} style={{paddingTop: "10%", zIndex: 99999}}>
       <ModalHeader>
         <Typography fontSize="0.8rem" fontWeight="bold">
           Puntue la entrevista
@@ -48,7 +48,6 @@ const HangDownModal = ({open, setOpen, guidOdoo}) => {
             onChange={(event, newValue) => {
               setRatingValue(newValue);
             }}
-            defaultValue={1}
             size="large"
             sx={{".MuiSvgIcon-root": {fill: "yellow"}}}
           />
